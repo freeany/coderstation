@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { initUserInfo, setLoginStatus } from '../store/userSlice'
 import styles from '../css/LoginForm.module.css'
-import { getCaptcha, userIsExist, addUser } from '../api/user'
+import { getCaptcha, userIsExist, addUser, userLogin, getUserById } from '../api/user'
 const formAttr = {
 	labelCol: {
 		span: 6
@@ -28,8 +28,33 @@ export default function LoginForm({ isModalOpen, handleLoginCancel }) {
 		captchaClickHandle()
 	}, [value])
 	// 成功的回调
-	const onFinishLogin = values => {
-		console.log('SuccessLogin:', values)
+	const onFinishLogin = async values => {
+		// console.log('SuccessLogin:', values)
+		const result = await userLogin(values)
+		if (result.code === 406) {
+			message.warning('验证码错误')
+			captchaClickHandle()
+			return
+		}
+		if (result.code === 0) {
+			const { data } = result
+			// 如果没有data,那么登陆名或者密码错误
+			if (!data.data) {
+				message.warning('登陆名或者密码错误')
+				return
+			}
+			console.log(data.data, 'xxx')
+			if (!data.data.enabled) {
+				message.warning('账号被冻结，请联系管理员')
+			} else {
+				message.success('登陆成功')
+				localStorage.setItem('userToken', data.token)
+				const userInfo = await getUserById(data.data._id)
+				dispatch(initUserInfo(userInfo.data))
+				handleLoginCancel(false)
+				dispatch(setLoginStatus(true))
+			}
+		}
 	}
 	const onResetLogin = () => {
 		formLogin.resetFields()

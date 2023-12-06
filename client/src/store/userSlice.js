@@ -11,11 +11,15 @@ const userSlice = createSlice({
 			state.userInfo = payload
 		},
 		setLoginStatus(state, { payload }) {
-			console.log(payload, 'pa.')
 			state.isLogin = payload
+		},
+		clearLoginInfo(state) {
+			state.isLogin = false
+			state.userInfo = {}
+			localStorage.removeItem('userToken')
 		}
 	}
 })
 
-export const { initUserInfo, setLoginStatus } = userSlice.actions
+export const { initUserInfo, setLoginStatus, clearLoginInfo } = userSlice.actions
 export default userSlice.reducer

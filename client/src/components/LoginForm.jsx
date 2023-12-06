@@ -1,7 +1,7 @@
 import { Modal, Radio, Form, Input, Button, Checkbox, Row, Col } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from '../css/LoginForm.module.css'
-
+import { getCaptcha } from '../api/user'
 const formAttr = {
 	labelCol: {
 		span: 6
@@ -21,6 +21,9 @@ export default function LoginForm({ isModalOpen, handleLoginCancel }) {
 	const [formRegistry] = Form.useForm()
 	const [captcha, setCaptcha] = useState(null)
 
+	useEffect(() => {
+		captchaClickHandle()
+	}, [value])
 	// 成功的回调
 	const onFinishLogin = values => {
 		console.log('SuccessLogin:', values)
@@ -34,7 +37,10 @@ export default function LoginForm({ isModalOpen, handleLoginCancel }) {
 	const onResetRegistry = () => {
 		formRegistry.resetFields()
 	}
-	function captchaClickHandle() {}
+	const captchaClickHandle = async () => {
+		const res = await getCaptcha()
+		setCaptcha(res)
+	}
 
 	const handleOk = () => {
 		console.log('ok...')

@@ -202,5 +202,50 @@ mongorestore -h localhost:27017 -d coderstation --dir /Users/jie/Desktop/coderst
    export default App;
    ```
 
-   
+
+
+## 项目细节
+
+1. *Icon*
+
+如果要使用 *Icon*，*Antd* 为我们提供了很多实用的 *Icon*，对应的地址为：*https://ant.design/components/icon/*
+
+每一个 *Icon*，使用之前需要引入，例如：
+
+```js
+import { UserOutlined } from "@ant-design/icons";
+```
+
+2. 请求转发
+
+在 *src* 目录下面新建一个 *setupProxy* 的文件，在该文件中进行请求转发的配置
+
+在使用的时候，还需要安装一个插件 *http-proxy-middleware*，配置示例如下：
+
+```js
+const { createProxyMiddleware } = require("http-proxy-middleware");
+
+module.exports = function(app){
+    app.use(createProxyMiddleware("/res", {
+        target: "http://127.0.0.1:7001",
+        changeOrigin : true
+    }),createProxyMiddleware("/api", {
+        target: "http://127.0.0.1:7001",
+        changeOrigin : true
+    }),createProxyMiddleware("/static", {
+        target: "http://127.0.0.1:7001",
+        changeOrigin : true
+    }))
+}
+```
+
+3. 如何渲染出 *svg* 图片
+
+之前在使用 *vue* 做个人博客的时候，如果想要渲染一段 *html* 或者 *svg*，需要使用 *v-html*
+
+在 *react* 中，可以通过如下的方式：
+
+```react
+ <div dangerouslySetInnerHTML={{ __html: captcha }}></div>
+```
 

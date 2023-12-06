@@ -6,7 +6,7 @@ import { UserOutlined } from '@ant-design/icons'
 import styles from '../css/LoginAvatar.module.css'
 export default function LoginAvatar({ handleLogin }) {
 	const { isLogin, userInfo } = useSelector(state => state.user)
-	console.log(isLogin, userInfo)
+	// console.log(isLogin, userInfo)
 	function handleClickLogin() {
 		handleLogin()
 	}

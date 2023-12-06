@@ -1,12 +1,12 @@
 // import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Button, Popover, List, Avatar } from 'antd'
+import { Button, Popover, List, Avatar, Image } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
 
 import styles from '../css/LoginAvatar.module.css'
 export default function LoginAvatar({ handleLogin }) {
 	const { isLogin, userInfo } = useSelector(state => state.user)
-	// console.log(isLogin, userInfo)
+	const { avatar } = userInfo
 	function handleClickLogin() {
 		handleLogin()
 	}
@@ -16,7 +16,7 @@ export default function LoginAvatar({ handleLogin }) {
 		isLoginJsx = (
 			<div className={styles.avatarContainer}>
 				<Popover content={<List dataSource={['个人中心', '退出登陆']} renderItem={item => <List.Item style={{ cursor: 'pointer' }}>{item}</List.Item>} />}>
-					<Avatar size={40} icon={<UserOutlined />} />
+					<Avatar src={<Image preview={false} src={'http://127.0.0.1:7001' + avatar} />} size={40} icon={<UserOutlined />} />
 				</Popover>
 			</div>
 		)

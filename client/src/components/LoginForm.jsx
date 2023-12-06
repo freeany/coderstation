@@ -1,7 +1,9 @@
-import { Modal, Radio, Form, Input, Button, Checkbox, Row, Col } from 'antd'
+import { Modal, Radio, Form, Input, Button, Checkbox, Row, Col, message } from 'antd'
 import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { initUserInfo, setLoginStatus } from '../store/userSlice'
 import styles from '../css/LoginForm.module.css'
-import { getCaptcha } from '../api/user'
+import { getCaptcha, userIsExist, addUser } from '../api/user'
 const formAttr = {
 	labelCol: {
 		span: 6
@@ -16,6 +18,7 @@ const formAttr = {
 }
 
 export default function LoginForm({ isModalOpen, handleLoginCancel }) {
+	const dispatch = useDispatch()
 	const [value, setValue] = useState(1)
 	const [formLogin] = Form.useForm()
 	const [formRegistry] = Form.useForm()
@@ -31,8 +34,18 @@ export default function LoginForm({ isModalOpen, handleLoginCancel }) {
 	const onResetLogin = () => {
 		formLogin.resetFields()
 	}
-	const onFinishRegistry = values => {
-		console.log('SuccessRegistry:', values)
+	const onFinishRegistry = async values => {
+		// console.log('SuccessRegistry:', values)
+		const data = await addUser(values)
+		if (data.code === 0) {
+			message.success('注册成功')
+			dispatch(initUserInfo(data.data))
+			handleLoginCancel(false)
+			dispatch(setLoginStatus(true))
+		} else if (data.code === 406) {
+			message.warning('验证码错误')
+			captchaClickHandle()
+		}
 	}
 	const onResetRegistry = () => {
 		formRegistry.resetFields()
@@ -42,17 +55,21 @@ export default function LoginForm({ isModalOpen, handleLoginCancel }) {
 		setCaptcha(res)
 	}
 
-	const handleOk = () => {
-		console.log('ok...')
-		handleLoginCancel(false)
-	}
 	const handleCancel = () => {
-		console.log('cancel')
 		handleLoginCancel(false)
 	}
 
 	function onChange(e) {
 		setValue(e.target.value)
+	}
+	const checkLoginIdIsExist = async () => {
+		const loginId = formRegistry.getFieldValue('loginId')
+		if (!loginId) return
+		// return Promise.reject('www')
+		const { data } = await userIsExist(loginId)
+		if (data) {
+			return Promise.reject('已存在该用户')
+		}
 	}
 
 	let container = null
@@ -96,7 +113,7 @@ export default function LoginForm({ isModalOpen, handleLoginCancel }) {
 					</Form.Item>
 
 					<Form.Item
-						name="logincaptcha"
+						name="captcha"
 						label="验证码"
 						rules={[
 							{
@@ -153,8 +170,11 @@ export default function LoginForm({ isModalOpen, handleLoginCancel }) {
 							{
 								required: true,
 								message: '请输入账号，仅此项为必填项!'
-							}
+							},
+							// 验证用户是否已经存在
+							{ validator: checkLoginIdIsExist }
 						]}
+						validateTrigger="onBlur"
 					>
 						<Input />
 					</Form.Item>
@@ -173,7 +193,7 @@ export default function LoginForm({ isModalOpen, handleLoginCancel }) {
 					</Form.Item>
 
 					<Form.Item
-						name="registercaptcha"
+						name="captcha"
 						label="验证码"
 						rules={[
 							{
@@ -212,7 +232,7 @@ export default function LoginForm({ isModalOpen, handleLoginCancel }) {
 
 	return (
 		<>
-			<Modal title="注册/登陆" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={null}>
+			<Modal title="注册/登陆" open={isModalOpen} onCancel={handleCancel} footer={null}>
 				<Radio.Group onChange={onChange} className={styles.radioGroup} defaultValue={value} optionType="button" buttonStyle="solid">
 					<Radio.Button value={1} className={styles.radioButton}>
 						登录

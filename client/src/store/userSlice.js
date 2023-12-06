@@ -9,9 +9,13 @@ const userSlice = createSlice({
 	reducers: {
 		initUserInfo(state, { payload }) {
 			state.userInfo = payload
+		},
+		setLoginStatus(state, { payload }) {
+			console.log(payload, 'pa.')
+			state.isLogin = payload
 		}
 	}
 })
 
-export const { initUserInfo } = userSlice.actions
+export const { initUserInfo, setLoginStatus } = userSlice.actions
 export default userSlice.reducer

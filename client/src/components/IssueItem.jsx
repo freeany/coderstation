@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { formatDate } from '../utils/tools.js'
 import styles from '../css/IssueItem.module.css'
 import { Tag } from 'antd'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { getUserById } from '../api/user'
 
 /**
  * 每一条问答的项目
  */
 function IssueItem(props) {
+	const navigate = useNavigate()
 	const { typeList } = useSelector(state => state.type)
 	const [userInfo, setUserInfo] = useState({}) // 存储用户的信息
+	const type = typeList.find(item => item._id === props.issueInfo.typeId)
 	const colorArr = ['#108ee9', '#2db7f5', '#f50', 'green', '#87d068', 'blue', 'red', 'purple']
 	useEffect(() => {
 		// 发送请求获取用户的信息
@@ -21,7 +24,10 @@ function IssueItem(props) {
 		fetchUserData()
 	}, [props.issueInfo.userId, typeList.length])
 
-	const type = typeList.find(item => item._id === props.issueInfo.typeId)
+	const handleToIssueDetail = () => {
+		navigate(`/issues/${props.issueInfo._id}`)
+	}
+
 	return (
 		<div className={styles.container}>
 			{/* 回答数 */}
@@ -36,7 +42,9 @@ function IssueItem(props) {
 			</div>
 			{/* 问题内容 */}
 			<div className={styles.issueContainer}>
-				<div className={styles.top}>{props.issueInfo.issueTitle}</div>
+				<div className={styles.top} onClick={handleToIssueDetail}>
+					{props.issueInfo.issueTitle}
+				</div>
 				<div className={styles.bottom}>
 					<div className={styles.left}>
 						<Tag color={colorArr[typeList.indexOf(type) % colorArr.length]}>{type?.typeName}</Tag>

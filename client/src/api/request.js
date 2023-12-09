@@ -1,39 +1,39 @@
 import axios from 'axios'
 
 const service = axios.create({
-	timeout: 5000
+	timeout: 5000 // 超时时间
 })
 
-// 请求拦截
+// 请求拦截器
 service.interceptors.request.use(
+	// 正常请求被拦截下来的回调函数
 	config => {
-		// 拦截到请求后，这里就可以做各种事情
-		// 一般是添加 token
-		// 从本地拿到 userToken
+		// 从本地存储中获取 token
 		const token = localStorage.getItem('userToken')
 		if (token) {
+			// 说明本地有 token 信息，在请求头的 Authorization 字段统一添加 token
 			config.headers['Authorization'] = 'Bearer ' + token
 		}
-
-		// 请求放行
+		// console.log(config,'config');
+		// 放行请求
 		return config
 	},
-	err => {
-		// 发生错误时的回调
-		console.log('请求拦截出错，错误信息：', err)
+	// 发生错误时的回调函数
+	error => {
+		console.log('请求拦截出错：', error)
 	}
 )
 
-// 响应拦截
+// 响应拦截器
 service.interceptors.response.use(
+	// 正常响应被拦截下来时的回调函数
 	response => {
-		// 拦截到响应后，可以做各种判断
 		const res = response.data
 		return res
 	},
-	err => {
-		// 发生错误时的回调
-		console.log('响应拦截出错，错误信息：', err)
+	// 发生错误时的回调函数
+	error => {
+		console.log('响应拦截出错：', error)
 	}
 )
 

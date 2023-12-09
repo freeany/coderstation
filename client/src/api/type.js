@@ -1,12 +1,11 @@
 import request from "./request";
 
 /**
- * 获取所有的类型
+ * 获取类型列表
  */
-
-export function getType(){
-    return request({
-        url : "/api/type",
-        method : "GET",
-    })
+export function getType() {
+  return request("/api/type", {
+    method: "GET",
+  });
 }
+

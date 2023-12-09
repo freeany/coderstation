@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { Pagination } from 'antd'
 import PageHeader from '../components/PageHeader'
 import { getIssueByPage } from '../api/issue'
 import styles from '../css/Issue.module.css'
 import IssueItem from '../components/IssueItem'
+import AddIssue from '../components/AddIssueButton'
 import { getTypeList } from '../store/typeSlice'
+import Recommend from '../components/Recommend'
+import ScoreRank from '../components/ScoreRank'
 
 function Issues(props) {
 	const dispatch = useDispatch()
@@ -20,6 +24,13 @@ function Issues(props) {
 		pageSize: 15,
 		total: 0
 	})
+	const onChangePage = (page, pageSize) => {
+		setPageInfo({
+			...pageInfo,
+			current: page,
+			pageSize
+		})
+	}
 
 	useEffect(() => {
 		const fetchList = async () => {
@@ -30,13 +41,13 @@ function Issues(props) {
 			})
 			setIssueList(data.data)
 			setPageInfo({
-				currentPage: data.currentPage,
-				pageSize: data.eachPage,
+				...pageInfo,
 				total: data.count
 			})
 		}
 		fetchList()
-	}, [pageInfo])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [pageInfo.current, pageInfo.pageSize])
 	return (
 		<div className={styles.container}>
 			{/* 上面的头部 */}
@@ -45,12 +56,27 @@ function Issues(props) {
 			<div className={styles.issueContainer}>
 				{/* 左边区域 */}
 				<div className={styles.leftSide}>
-					{issuseList.map((item, index) => {
-						return <IssueItem key={index} issueInfo={item} />
+					{issuseList.map(item => {
+						return <IssueItem key={item._id} issueInfo={item} />
 					})}
+					<div className="paginationContainer">
+						<Pagination
+							showTotal={total => `Total ${total} items`}
+							pageSize={pageInfo.pageSize}
+							current={pageInfo.current}
+							showQuickJumper
+							showSizeChanger
+							total={pageInfo.total}
+							onChange={onChangePage}
+						/>
+					</div>
 				</div>
 				{/* 右边区域 */}
-				<div className={styles.rightSide}></div>
+				<div className={styles.rightSide}>
+					<AddIssue></AddIssue>
+					<Recommend></Recommend>
+					<ScoreRank></ScoreRank>
+				</div>
 			</div>
 		</div>
 	)

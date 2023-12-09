@@ -43,7 +43,6 @@ export default function LoginForm({ isModalOpen, handleLoginCancel }) {
 				message.warning('登陆名或者密码错误')
 				return
 			}
-			console.log(data.data, 'xxx')
 			if (!data.data.enabled) {
 				message.warning('账号被冻结，请联系管理员')
 			} else {

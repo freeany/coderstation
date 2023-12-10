@@ -16,7 +16,6 @@ function AddIssue() {
 	const editorRef = useRef()
 	const [form] = Form.useForm()
 	const onFinish = values => {
-		console.log('Success:', values)
 		const html = editorRef.current.getInstance().getHTML()
 		const params = {
 			...values,

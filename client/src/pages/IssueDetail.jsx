@@ -6,10 +6,10 @@ import { useParams } from 'react-router-dom'
 import { Avatar } from 'antd'
 import { getIssueById } from '../api/issue'
 import { getUserById } from '../api/user'
-import { updateIssue } from '../api/issue'
+// import { updateIssue } from '../api/issue'
 import styles from '../css/IssueDetail.module.css'
 import { formatDate } from '../utils/tools'
-import Discuss from './Discuss'
+import Discuss from '../components/Discuss'
 
 function IssueDetail(props) {
 	const { id } = useParams() // 获取可能传递过来的 id
@@ -42,7 +42,7 @@ function IssueDetail(props) {
 						<div dangerouslySetInnerHTML={{ __html: issueInfo?.issueContent }}></div>
 					</div>
 					{/* 下方评论模块 */}
-					<Discuss issueInfo={issueInfo}></Discuss>
+					<Discuss commentType={1} issueInfo={issueInfo}></Discuss>
 				</div>
 				{/* 右侧 */}
 				<div className={styles.rightSide}>

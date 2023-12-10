@@ -1,13 +1,32 @@
 import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { Input, Select } from 'antd'
 import LoginAvatar from './LoginAvatar'
 import LoginForm from './LoginForm'
 
 function PageHeader() {
+	const navigate = useNavigate()
 	const [isShowLoginModal, setIsShowLoginModal] = useState(false)
+	const [searchOptions, setSearchOption] = useState('issue')
 	function handleLogin() {
 		setIsShowLoginModal(true)
+	}
+
+	function onChange(value) {
+		setSearchOption(value)
+	}
+	const onSearch = value => {
+		if (value) {
+			// 跳转到搜索页，将搜索内容传递过去
+			navigate('/searchpage', {
+				state: {
+					value,
+					searchOptions
+				}
+			})
+		} else {
+			navigate('/issues')
+		}
 	}
 
 	function handleLoginCancel() {
@@ -37,7 +56,7 @@ function PageHeader() {
 			{/* 搜索框 */}
 			<div className="searchContainer">
 				<Input.Group compact>
-					<Select defaultValue="issue" size="large" style={{ width: '20%' }}>
+					<Select defaultValue="issue" size="large" style={{ width: '20%' }} onChange={onChange}>
 						<Select.Option value="issue">问答</Select.Option>
 						<Select.Option value="book">书籍</Select.Option>
 					</Select>
@@ -49,6 +68,7 @@ function PageHeader() {
 						style={{
 							width: '80%'
 						}}
+						onSearch={onSearch}
 					/>
 				</Input.Group>
 			</div>

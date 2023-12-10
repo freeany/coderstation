@@ -1,17 +1,18 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Layout, message } from 'antd'
 import { useDispatch } from 'react-redux'
+import Context from './context'
 import NavHeader from './components/NavHeader'
 import PageFooter from './components/PageFooter'
 import { getInfo, getUserById } from './api/user.js'
+import { initUserInfo, setLoginStatus } from './store/userSlice.js'
+import RouterBefore from './router/RouterBefore.jsx'
 import './css/App.css'
 import './fonts/iconfont.css'
-import RouterConfig from './router/index.jsx'
-import { initUserInfo, setLoginStatus } from './store/userSlice.js'
 
 const { Header, Footer, Content } = Layout
 
-function App() {
+const AppContainer = () => {
 	const dispatch = useDispatch()
 
 	useEffect(() => {
@@ -39,7 +40,7 @@ function App() {
 			</Header>
 			{/* 匹配上的路由页面 */}
 			<Content className="content">
-				<RouterConfig />
+				<RouterBefore />
 			</Content>
 			{/* 底部 */}
 			<Footer className="footer">
@@ -49,4 +50,15 @@ function App() {
 	)
 }
 
+function App() {
+	const [ctx, setCtx] = useState({
+		issueTypeId: 'all',
+		bookTypeId: 'all'
+	})
+	return (
+		<Context.Provider value={{ ctx, setCtx }}>
+			<AppContainer></AppContainer>
+		</Context.Provider>
+	)
+}
 export default App

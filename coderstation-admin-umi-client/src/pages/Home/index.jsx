@@ -1,18 +1,41 @@
-import Guide from '@/components/Guide';
-import { trim } from '@/utils/format';
-import { PageContainer } from '@ant-design/pro-components';
-import { useModel } from '@umijs/max';
-import styles from './index.less';
+import styles from './index.module.css';
 
-const HomePage = () => {
-  const { name } = useModel('global');
+import DemoPie from "./Charts/DemoPie";
+import DemoBar from "./Charts/DemoBar";
+import DemoDualAxes from "./Charts/DemoDualAxes";
+import DemoColumn from "./Charts/DemoColumn";
+import DemoBullet from "./Charts/DemoBullet";
+
+function HomePage() {
   return (
-    <PageContainer ghost>
-      <div className={styles.container}>
-        <Guide name={trim(name)} />
+    <div className={styles.container}>
+      {/* 第一行 */}
+      <div className={styles.wrapper}>
+        <div className={styles.left}>
+          <DemoPie />
+        </div>
+        <div className={styles.middle}>
+          <DemoBullet />
+        </div>
+        <div className={styles.right}>
+          <DemoPie />
+        </div>
       </div>
-    </PageContainer>
-  );
-};
+      {/* 第二行 */}
+      <div className={styles.wrapper}>
+        <DemoDualAxes />
+      </div>
+      {/* 第三行 */}
+      <div className={styles.wrapper}>
+        <div className={styles.left}>
+          <DemoBar />
+        </div>
+        <div className={styles.right}>
+          <DemoColumn />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default HomePage;
